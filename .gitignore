@@ -28,7 +28,6 @@ data/db/
 # Autre
 .DS_Store
 
-# Ignorer tous les fichiers Markdown
-*.md
+
 
 logs/

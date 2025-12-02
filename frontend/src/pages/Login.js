@@ -3,11 +3,16 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+/**
+ * Page de connexion
+ * Permet à l'utilisateur de se connecter avec username et password
+ */
 const Login = () => {
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
   });
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -24,17 +29,13 @@ const Login = () => {
       localStorage.setItem("username", username);
       localStorage.setItem("role", role);
 
-      navigate("/"); // Redirige vers la page d'accueil après la connexion
+      navigate("/");
     } catch (error) {
-      // Gestion des erreurs
       if (error.response) {
-        // Erreur renvoyée par le serveur
         const { message } = error.response.data;
-        alert(message); // Affiche un message à l'utilisateur (vous pouvez remplacer par un toast)
+        setError(message);
       } else {
-        // Erreur réseau ou autre
-        console.error("Erreur réseau ou serveur", error);
-        alert("Une erreur est survenue. Veuillez réessayer.");
+        setError("Une erreur est survenue. Veuillez réessayer.");
       }
     }
   };
@@ -46,6 +47,7 @@ const Login = () => {
         className="bg-white p-6 rounded shadow-md w-80"
       >
         <h2 className="text-2xl font-bold mb-4 text-center">Connexion</h2>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
         <input
           type="text"
           placeholder="Nom d'utilisateur"

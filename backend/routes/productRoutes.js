@@ -4,8 +4,19 @@ const { getProducts, updateProductStock } = require('../controllers/productContr
 const { authenticateToken, isAdmin } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
-router.get('/', getProducts);
-router.put("/:productId/stock", authenticateToken, isAdmin, updateProductStock);
 
+/**
+ * @route GET /api/products
+ * @description Récupère tous les produits
+ * @access Public
+ */
+router.get('/', getProducts);
+
+/**
+ * @route PUT /api/products/:productId/stock
+ * @description Met à jour le stock d'un produit
+ * @access Privé (Admin uniquement)
+ */
+router.put("/:productId/stock", authenticateToken, isAdmin, updateProductStock);
 
 module.exports = router;

@@ -13,11 +13,16 @@ connectDB();
 // Sécurité HTTP
 app.use(helmet());
 
-// CORS uniquement pour le frontend Render
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://exam-frontend.onrender.com"
+];
+
 app.use(cors({
-  origin: ["https://exam-frontend.onrender.com"],
+  origin: allowedOrigins,
   credentials: true
 }));
+
 
 // Limitation de requêtes
 app.use(rateLimit({

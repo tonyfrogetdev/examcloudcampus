@@ -7,10 +7,22 @@ const axios = require('axios');
 const authLog = require('debug')('authRoutes:console')
 //const sendEmail = require('../services/emailService');
 
+/**
+ * Authentifie un utilisateur
+ * @param {Object} req - Requête Express
+ * @param {Object} req.body - Corps de la requête
+ * @param {string} req.body.username - Nom d'utilisateur
+ * @param {string} req.body.password - Mot de passe
+ * @param {Object} res - Réponse Express
+ * @returns {Object} Token JWT et informations utilisateur
+ */
 exports.login = async (req, res) => {
   const { username, password } = req.body;
   authLog(`username is ${username} password is ${password}`);
 
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Tous les champs sont requis' });
+  }
 
   try {
     const user = await User.findOne({ username });
@@ -30,37 +42,40 @@ exports.login = async (req, res) => {
 };
 
 
+/**
+ * Enregistre un nouvel utilisateur
+ * @param {Object} req - Requête Express
+ * @param {Object} req.body - Corps de la requête
+ * @param {string} req.body.username - Nom d'utilisateur
+ * @param {string} req.body.email - Email de l'utilisateur
+ * @param {string} req.body.password - Mot de passe (sera hashé)
+ * @param {Object} res - Réponse Express
+ * @returns {Object} Message de succès
+ */
 exports.register = async (req, res) => {
   const { username, email, password } = req.body;
   authLog(`username is ${username} email is ${email} password is ${password}`);
 
+  if (!username || !email || !password) {
+    return res.status(400).json({ message: 'Tous les champs sont requis' });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ message: 'Le mot de passe doit contenir au moins 6 caractères' });
+  }
+
   try {
-    // Vérifier si l'email ou le nom d'utilisateur existe déjà
     const existingUser = await User.findOne({ email });
-    
+
     if (existingUser) {
       authLog(`user exist => ${JSON.stringify(existingUser)}`)
       return res.status(400).json({ message: 'Cet email est déjà utilisé.' });
     }
 
-    // Créer un nouvel utilisateur
     const user = new User({ username, email, password });
     await user.save();
 
     authLog(`user after creation => ${JSON.stringify(user)}`)
-
-    // Envoyer un email de bienvenue
-    // await sendEmail(
-    //   email,
-    //   'Bienvenue dans notre application',
-    //   `Bonjour ${username},\n\nMerci de vous être inscrit. Nous sommes ravis de vous accueillir !`
-    // );
-
-    // await axios.post('http://localhost:4002/notify', {
-    //   to: email,
-    //   subject: 'Bienvenue dans notre application',
-    //   text: `Bonjour ${username},\n\nMerci de vous être inscrit. Nous sommes ravis de vous accueillir !`,
-    // });
 
     res.status(201).json({ message: 'Utilisateur créé avec succès.' });
   } catch (error) {
