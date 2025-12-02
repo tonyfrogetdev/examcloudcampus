@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 const connectDB = require('./config/db');
+const logger = require('./config/logger'); // Winston
 
 const app = express();
 connectDB();
@@ -20,28 +21,29 @@ app.use(cors({
 
 // Limitation de requêtes
 app.use(rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 min
+  windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100
 }));
 
 // JSON parser
 app.use(express.json());
 
+// Logs de démarrage
+logger.info("Serveur initialisé", { env: process.env.NODE_ENV });
+
 // Routes API
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/auth', require('./routes/authRoutes'));
 
-// Endpoint de test /health
+// Endpoint pour monitoring
 app.get('/health', (req, res) => {
+  logger.info("Health check effectué");
   res.json({ status: "ok" });
 });
 
 // Démarrage serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Serveur en écoute sur le port ${PORT}`);
+  logger.info(`Serveur en écoute`, { port: PORT });
 });
-
-
-// test pour autodeploy encore pour fonctionner
