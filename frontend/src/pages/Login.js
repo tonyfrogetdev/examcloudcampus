@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_BASE_URL from "../config/api";
 
 /**
  * Page de connexion
@@ -19,7 +20,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${API_BASE_URL}/auth/login`,
         credentials
       );
       const { token, role, username } = response.data;
