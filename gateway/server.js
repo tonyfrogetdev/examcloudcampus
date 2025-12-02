@@ -22,3 +22,8 @@ const PORT = process.env.GATEWAY_PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Gateway opérationnel sur le port ${PORT}`);
 });
+
+// Endpoint de santé pour le monitoring
+app.get('/health', (req, res) => {
+  res.json({ status: "ok" });
+});
