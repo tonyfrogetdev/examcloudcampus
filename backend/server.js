@@ -15,7 +15,8 @@ app.use(helmet());
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://exam-frontend.onrender.com"
+  "https://exam-frontend.onrender.com",
+  "https://front-end-cloud-campus.onrender.com"
 ];
 
 app.use(cors({
